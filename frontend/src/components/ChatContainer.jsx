@@ -20,7 +20,6 @@ const ChatContainer = () => {
   const { authUser } = useAuthStore();
   const messageEndRef = useRef(null);
 
-  console.log("authUser lè: ", authUser.user.fullName);
   // Fetch messages and set up subscription
   useEffect(() => {
     if (selectedUser && selectedUser._id) {

@@ -8,6 +8,9 @@ import path from "path"
 
 import authRoutes from "./routes/auth.route.js";
 import messageRoute from "./routes/message.route.js";
+import removebg from "./routes/rmbackground.route.js"
+import createim from "./routes/createim.route.js"
+import taskRouter from "./routes/taskRoutes.route.js"
 import { app, server } from "./lib/socket.js";
 dotenv.config();
 
@@ -22,10 +25,14 @@ app.use(cors({
     origin: "http://localhost:5173", // Client
     credentials: true,
 }));
+app.use("/api/ai", removebg); // Định tuyến API AI
+app.use("/api/ai", createim);
+
 
 // Routes
 app.use("/api/auth", authRoutes);
 app.use("/api/messages", messageRoute);
+app.use("/api/tasks", taskRouter);
 
 if (process.env.NODE_ENV === "production") {
     app.use(express.static(path.join(__dirname, "../frontend/dist")));

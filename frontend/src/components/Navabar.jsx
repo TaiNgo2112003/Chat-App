@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import { useAuthStore } from "../store/useAuthStore";
 import { LogOut, MessageSquare, Settings, User } from "lucide-react";
 import { FaTasks, FaCloud, FaAddressBook, FaCompass, FaRegClock, FaCog, FaSignOutAlt, FaUserCircle } from "react-icons/fa"; // Import biểu tượng mới
+import {FaRobot} from "react-icons/fa"; // Import icon AI
 
 const Navbar = () => {
   const { logout, authUser } = useAuthStore();
@@ -47,6 +48,11 @@ const Navbar = () => {
                 <Link to={"/discovery"} className={`btn btn-sm gap-2`}>
                   <FaCompass className="size-5" /> {/* Biểu tượng khám phá */}
                   <span className="hidden sm:inline">Discovery</span>
+                </Link>
+
+                <Link to={"/generatorimage"} className={`btn btn-sm gap-2`}>
+                  <FaRobot className="size-5" /> {/* Biểu tượng AI */}
+                  <span className="hidden sm:inline">AI Image</span>
                 </Link>
 
                 <Link to={"/timeline"} className={`btn btn-sm gap-2`}>

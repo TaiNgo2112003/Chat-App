@@ -15,6 +15,7 @@
     "@aws-sdk/client-s3": "^3.726.1",
     "@heroicons/react": "^2.2.0",
     "aws-sdk": "^2.1692.0",
+    "axios": "^1.8.1",
     "bcryptjs": "^2.4.3",
     "chat-app": "file:..",
     "cloudinary": "^2.5.1",

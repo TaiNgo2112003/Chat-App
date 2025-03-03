@@ -12,6 +12,7 @@ import CloudPage from "./pages/CloudPage"
 import ContactsPage from "./pages/ContactsPage"
 import DiscoveryPage from "./pages/DiscoveryPage"
 import TimeLinePage from "./pages/TimeLinePage"
+import AiImage from "./pages/AIImage"
 import { useAuthStore } from './store/useAuthStore'
 import { useThemeStore } from './store/useThemeStore'
 import { Loader } from "lucide-react"
@@ -21,10 +22,10 @@ const App = () => {
   const { theme } = useThemeStore();
   const checkAuth = useAuthStore((state) => state.checkAuth);
   const isCheckingAuth = useAuthStore((state) => state.isCheckingAuth);
-  const onlineUsers  = useAuthStore();
+  const onlineUsers = useAuthStore();
   const { authUser } = useAuthStore();
 
-  console.log("onlineUsers on App.jsx:", onlineUsers)
+  //console.log("onlineUsers on App.jsx:", onlineUsers)
   useEffect(() => {
     checkAuth()
   }, []);
@@ -35,8 +36,8 @@ const App = () => {
     </div>
   );
 
-  console.log({ authUser });
-  console.log();
+  //console.log({ authUser });
+  //console.log();
   return (
     <div data-theme={theme}>
       <Navabar />
@@ -52,6 +53,8 @@ const App = () => {
         <Route path='/profile' element={authUser ? <ProfilePage /> : <Navigate to="/login" />} />
 
         <Route path='/todo' element={authUser ? <ToDoPage /> : <Navigate to="/login" />} />
+
+        <Route path='/generatorimage' element={authUser ? <AiImage /> : <Navigate to="/login" />} />
 
         <Route path='/cloud' element={authUser ? <CloudPage /> : <Navigate to="/login" />} />
 

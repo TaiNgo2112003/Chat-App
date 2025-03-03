@@ -130,21 +130,36 @@ const SettingsPage = () => {
   );
 
 
-  const renderLanguageSection = () => (
-    <div>
-      <h2 className="text-lg font-semibold">Language</h2>
-      <p className="text-sm text-base-content/70">
-        Select your preferred language
-      </p>
-      <select className="select select-bordered w-full mt-4">
-        <option>English</option>
-        <option>Vietnamese</option>
-        <option>French</option>
-        <option>Spanish</option>
-      </select>
-    </div>
-  );
-
+  const LanguageSection = () => {
+    const [language, setLanguage] = useState("en");
+  
+    const translations = {
+      en: { title: "Language", description: "Select your preferred language" },
+      vi: { title: "Ngôn ngữ", description: "Chọn ngôn ngữ bạn muốn" },
+      fr: { title: "Langue", description: "Sélectionnez votre langue préférée" },
+      es: { title: "Idioma", description: "Selecciona tu idioma preferido" },
+    };
+  
+    return (
+      <div>
+        <h2 className="text-lg font-semibold">{translations[language].title}</h2>
+        <p className="text-sm text-base-content/70">
+          {translations[language].description}
+        </p>
+        <select
+          className="select select-bordered w-full mt-4"
+          value={language}
+          onChange={(e) => setLanguage(e.target.value)}
+        >
+          <option value="en">English</option>
+          <option value="vi">Vietnamese</option>
+          <option value="fr">French</option>
+          <option value="es">Spanish</option>
+        </select>
+      </div>
+    );
+  };
+  
   const renderFAQsSection = () => (
     <div>
       <h2 className="text-lg font-semibold">FAQs</h2>
@@ -158,7 +173,7 @@ const SettingsPage = () => {
   );
 
 
-
+  //Contact function
   const renderContactSupportSection = () => (
     <div className="container mx-auto px-4 py-6 max-w-4xl">
       <h2 className="text-2xl font-semibold mb-4">Contact Us</h2>
@@ -216,7 +231,7 @@ const SettingsPage = () => {
     </div>
   );
 
-
+  //Feedback function
   const renderFeedbackSection = () => (
     <div>
       <h2 className="text-lg font-semibold">Feedback</h2>
@@ -228,7 +243,7 @@ const SettingsPage = () => {
       <button className="btn btn-primary mt-2">Submit</button>
     </div>
   );
-
+  //Conntected function
   const renderConnectedAppsSection = () => (
     <div>
       <h2 className="text-lg font-semibold">Connected Apps</h2>
@@ -242,7 +257,7 @@ const SettingsPage = () => {
       </ul>
     </div>
   );
-
+  //AppVersions function
   const renderAppVersionSection = () => (
     <div>
       <h2 className="text-lg font-semibold">App Version</h2>
@@ -258,7 +273,7 @@ const SettingsPage = () => {
       case "theme":
         return renderThemeSection();
       case "language":
-        return renderLanguageSection();
+        return <LanguageSection/>;
       case "faq":
         return renderFAQsSection();
       case "contact":

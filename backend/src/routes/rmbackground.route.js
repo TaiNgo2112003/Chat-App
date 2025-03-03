@@ -1,7 +1,6 @@
 import express from "express"
-import axios from "axios";
 import { axiosInstance } from "../lib/axios";
-
+import { axiosInstance } from "../../../frontend/src/lib/axios";
 const router = express.Router();
 
 const API_KEY = "sk_5a72a5f18ebc46508c81abbc54b76726"; // Thay API key của bạn

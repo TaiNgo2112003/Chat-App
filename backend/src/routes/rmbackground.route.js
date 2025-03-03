@@ -1,5 +1,7 @@
 import express from "express"
 import axios from "axios";
+import { axiosInstance } from "../lib/axios";
+
 const router = express.Router();
 
 const API_KEY = "sk_5a72a5f18ebc46508c81abbc54b76726"; // Thay API key của bạn
@@ -12,7 +14,7 @@ router.post("/remove-background", async (req, res) => {
             return res.status(400).json({ error: "Thiếu URL ảnh" });
         }
 
-        const response = await axios.post( 
+        const response = await axiosInstance.post( 
             "https://api.pixelcut.ai/v2/remove-background",
             { image_url, format: "png" },
             {
@@ -29,6 +31,6 @@ router.post("/remove-background", async (req, res) => {
         console.error("Lỗi API Pixelcut:", error.response?.data || error.message);
         res.status(500).json({ error: "Lỗi khi gọi API Pixelcut" });
     }
-});
+}); 
 
 export default router;

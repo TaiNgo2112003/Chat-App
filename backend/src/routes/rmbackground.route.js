@@ -12,8 +12,8 @@ router.post("/remove-background", async (req, res) => {
             return res.status(400).json({ error: "Thiếu URL ảnh" });
         }
 
-        const response = await axios.post(
-            "https://api.developer.pixelcut.ai/v1/remove-background",
+        const response = await axios.post( 
+            "https://api.pixelcut.ai/v2/remove-background",
             { image_url, format: "png" },
             {
                 headers: {

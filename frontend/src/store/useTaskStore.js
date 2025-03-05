@@ -12,7 +12,6 @@ export const useTaskStore = create((set, get) => ({
     set({ isLoading: true });
     try {
       const response = await axiosInstance.get(`/tasks`);
-      console.log("Tasks fetched from API:", response.data);
       set({
         tasks: Array.isArray(response.data) ? response.data : [],
         isLoading: false
@@ -23,6 +22,16 @@ export const useTaskStore = create((set, get) => ({
       set({ isLoading: false });
     }
   },
+    // Xóa task
+    deleteTask: async (taskId) => {
+      try {
+        await axiosInstance.delete(`/tasks/${taskId}`);
+        set({ tasks: get().tasks.filter(task => task._id !== taskId) });
+        toast.success("Task deleted successfully!");
+      } catch (error) {
+        toast.error(error.response?.data?.message || "Failed to delete task");
+      }
+    },
   // Tạo task mới
   createTask: async (taskData) => {
     try {
@@ -43,16 +52,7 @@ export const useTaskStore = create((set, get) => ({
     }
   },
 
-  // Xóa task
-  deleteTask: async (taskId) => {
-    try {
-      await axiosInstance.delete(`/tasks/${taskId}`);
-      set({ tasks: get().tasks.filter(task => task._id !== taskId) });
-      toast.success("Task deleted successfully!");
-    } catch (error) {
-      toast.error(error.response?.data?.message || "Failed to delete task");
-    }
-  },
+
 
   // Cập nhật task (ví dụ: đổi trạng thái hoàn thành)
   updateTask: async (taskId, updates) => {

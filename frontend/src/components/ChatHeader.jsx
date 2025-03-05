@@ -2,11 +2,62 @@ import { X } from "lucide-react";
 import { useAuthStore } from "../store/useAuthStore";
 import { useChatStore } from "../store/useChatStore";
 import { PhoneIcon, VideoCameraIcon, MagnifyingGlassIcon, XMarkIcon } from "@heroicons/react/24/outline";
+import toast from "react-hot-toast";
+import React, { useEffect } from 'react';
 
 const ChatHeader = () => {
   const { selectedUser, setSelectedUser } = useChatStore();
-  const { onlineUsers } = useAuthStore();
+  const { onlineUsers, socket, authUser } = useAuthStore();
 
+  const initiateCall = (receiverId) => {
+    if (!authUser || !selectedUser) {
+      toast.error("Vui lòng chọn người dùng trước khi gọi.");
+      return;
+    }
+
+    if (socket) {
+      socket.emit('callUser', {
+        callerId: authUser._id,
+        receiverId: receiverId,
+        callerName: authUser.fullName  // Gửi thêm tên đầy đủ
+      });
+
+      toast.success(`📞 Đang gọi tới ${selectedUser.fullName}...`);
+    } else {
+      toast.error("Socket chưa sẵn sàng, vui lòng thử lại.");
+    }
+  };
+
+  // Placeholder cho video call (bạn cần implement sau)
+  const initiateVideoCall = (receiverId) => {
+    toast('📹 Video call chưa được hỗ trợ.');
+  };
+
+  // Placeholder cho tìm kiếm trong chat (bạn cần implement sau)
+  const openFindInChat = () => {
+    toast('🔍 Tính năng tìm kiếm chưa được hỗ trợ.');
+  };
+
+  useEffect(() => {
+    if (!socket) return;
+
+    const handleCallAccepted = () => {
+      toast.success(`${selectedUser.fullName} đã chấp nhận cuộc gọi!`);
+      // TODO: Chuyển sang giao diện gọi thực sự (WebRTC)
+    };
+
+    const handleCallRefused = () => {
+      toast.error(`${selectedUser.fullName} đã từ chối cuộc gọi.`);
+    };
+
+    socket.on("callAccepted", handleCallAccepted);
+    socket.on("callRefused", handleCallRefused);
+
+    return () => {
+      socket.off("callAccepted", handleCallAccepted);
+      socket.off("callRefused", handleCallRefused);
+    };
+  }, [selectedUser, socket]);
 
   return (
     <div className="p-2.5 border-b border-base-300">
@@ -56,7 +107,7 @@ const ChatHeader = () => {
 
           {/* Find in Chat Button */}
           <button
-            onClick={() => openFindInChat()}
+            onClick={openFindInChat}
             className="btn btn-sm btn-accent flex items-center gap-1"
             title="Find in Chat"
           >
@@ -77,5 +128,6 @@ const ChatHeader = () => {
       </div>
     </div>
   );
-}
-  export default ChatHeader;
+};
+
+export default ChatHeader;

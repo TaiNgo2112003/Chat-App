@@ -1,5 +1,4 @@
 import { useState } from "react";
-import axios from "axios";
 import { axiosInstance } from "../lib/axios";
 export default function AIImage() {
   const [imageUrl, setImageUrl] = useState("");

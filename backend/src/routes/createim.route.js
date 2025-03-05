@@ -3,9 +3,8 @@ import axios from "axios";
 const router = express.Router();
 
 router.post("/create-image", async (req, res) => {
-  console.log("\uD83D\uDCE2 Nhận request tạo ảnh"); // ✅ Debug log
   const { text, resolution } = req.body;
-  const validSizes = ["256x256", "1024x1024"]; // Chỉ hỗ trợ kích thước hợp lệ
+  const validSizes = ["256x256", "1024x1024"]; 
   
   if (!text || !resolution) {
     console.error("❌ Lỗi: Thiếu dữ liệu đầu vào");

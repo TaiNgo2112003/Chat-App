@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useTaskStore } from "../store/useTaskStore";
+import TaskEditModal from "../pages/TaskEditModal";
+import ReactPaginate from 'react-paginate';
 
 const CreateTaskForm = () => {
     const [title, setTitle] = useState("");
@@ -8,12 +10,31 @@ const CreateTaskForm = () => {
     const [priority, setPriority] = useState("Medium");
     const [status, setStatus] = useState("pending");
 
-    const { tasks, fetchTasks, createTask } = useTaskStore();
+    const { tasks, fetchTasks, createTask, deleteTask, updateTask } = useTaskStore();
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [selectedTask, setSelectedTask] = useState(null);
 
-    useEffect(() => {
-        fetchTasks(); // Lấy danh sách task khi vào trang
-    }, []);
+    const tasksPerPage = 3;
+    const [currentPage, setCurrentPage] = useState(0);
+    const pageCount = Math.ceil(tasks.length / tasksPerPage);
+    const offset = currentPage * tasksPerPage;
+    const currentTasks = tasks.slice(offset, offset + tasksPerPage);
+    const handlePageClick = ({ selected }) => {
+        setCurrentPage(selected)
+    }
+    {/* Edit task */ }
+    const handleEdit = (task) => {
+        setSelectedTask(task);
+        setIsModalOpen(true);
+    }
 
+    {/* Update task */ }
+    const handleSaveTask = async (taskId, updatedData) => {
+        await updateTask(taskId, updatedData);
+        fetchTasks();
+    };
+
+    {/* Save task */ }
     const handleSubmit = async (e) => {
         e.preventDefault();
         await createTask({ title, description, dueDate, priority, status });
@@ -24,6 +45,17 @@ const CreateTaskForm = () => {
         setStatus("pending")
         fetchTasks(); // Fetch lại danh sách task sau khi thêm
     };
+
+    {/* Delete task */ }
+    const handleDelete = (taskId) => {
+        console.log("task id in to do: ", taskId)
+        if (window.confirm("Bạn có chắc chắn muốn xóa task này không?")) {
+            deleteTask(taskId);
+        }
+    };
+    useEffect(() => {
+        fetchTasks(); // Lấy danh sách task khi vào trang
+    }, []);
 
     return (
         <div className="min-h-screen container mx-auto px-4 pt-20 max-w-3xl">
@@ -100,15 +132,10 @@ const CreateTaskForm = () => {
             </div>
 
             {/* Danh sách Task */}
-
             <div className="mt-6">
                 <ul className="space-y-3">
-                    {tasks.map((task) => (
-                        <li
-                            key={task._id}
-                            className="flex justify-between items-center bg-white border border-gray-300 p-4 rounded-lg shadow-sm hover:shadow-md transition"
-                        >
-                            {/* Nội dung bên trái */}
+                    {currentTasks.map((task) => (
+                        <li key={task._id} className="flex justify-between items-center bg-white border border-gray-300 p-4 rounded-lg shadow-sm hover:shadow-md transition">
                             <div className="flex-1 min-w-0">
                                 <h3 className="font-semibold text-gray-800 text-sm md:text-base truncate">
                                     {task.title}
@@ -136,31 +163,48 @@ const CreateTaskForm = () => {
                                 </div>
                             </div>
 
-                            {/* Khu vực nút bấm */}
                             <div className="flex items-center space-x-2">
-                                <button
-                                    onClick={() => handleEdit(task)}
-                                    className="px-3 py-1 text-xs font-medium bg-blue-500 text-white rounded-md hover:bg-blue-600 transition"
-                                >
+                                <button onClick={() => handleEdit(task)} className="px-3 py-1 text-xs font-medium bg-blue-500 text-white rounded-md hover:bg-blue-600 transition">
                                     Sửa
                                 </button>
-                                <button
-                                    onClick={() => handleDelete(task._id)}
-                                    className="px-3 py-1 text-xs font-medium bg-red-500 text-white rounded-md hover:bg-red-600 transition"
-                                >
+                                <button onClick={() => handleDelete(task._id)} className="px-3 py-1 text-xs font-medium bg-red-500 text-white rounded-md hover:bg-red-600 transition">
                                     Xóa
                                 </button>
                             </div>
+                            <TaskEditModal
+                                isOpen={isModalOpen}
+                                onClose={() => setIsModalOpen(false)}
+                                task={selectedTask}
+                                onSave={handleSaveTask}
+                            />
                         </li>
                     ))}
                 </ul>
-            </div>
 
+                <div className="mt-4 flex justify-center">
+                    <ReactPaginate
+                        previousLabel={"←"}
+                        nextLabel={"→"}
+                        breakLabel={"..."}
+                        pageCount={pageCount}
+                        marginPagesDisplayed={1}
+                        pageRangeDisplayed={2}
+                        onPageChange={handlePageClick}
+                        containerClassName={"flex space-x-2"}
+                        pageClassName={"px-3 py-1 border rounded"}
+                        activeClassName={"bg-blue-500 text-white"}
+                        previousClassName={"px-3 py-1 border rounded"}
+                        nextClassName={"px-3 py-1 border rounded"}
+                        disabledClassName={"opacity-50"}
+                    />
+                </div>
+            </div>
+            {/* Danh sách Task - End */}
         </div>
     );
 };
 
-// Hàm helper đổi màu theo priority
+{/*  Hàm helper đổi màu theo priority */ }
 const getPriorityColor = (priority) => {
     switch (priority) {
         case "High":
@@ -173,7 +217,7 @@ const getPriorityColor = (priority) => {
             return "bg-gray-300";
     }
 };
-// Hàm helper đổi màu theo status
+{/*  Hàm helper đổi màu theo status */ }
 const getStatusColor = (priority) => {
     switch (priority) {
         case "in-progress":
@@ -188,29 +232,64 @@ const getStatusColor = (priority) => {
 };
 export default CreateTaskForm;
 
+// {/* <div className="mt-6">
+// <ul className="space-y-3">
+//     {tasks.map((task) => (
+//         <li
+//             key={task._id}
+//             className="flex justify-between items-center bg-white border border-gray-300 p-4 rounded-lg shadow-sm hover:shadow-md transition"
+//         >
+//             {/* Nội dung bên trái */}
+//             <div className="flex-1 min-w-0">
+//                 <h3 className="font-semibold text-gray-800 text-sm md:text-base truncate">
+//                     {task.title}
+//                 </h3>
+//                 <p className="text-xs md:text-sm text-gray-600 mt-1 line-clamp-2">
+//                     {task.description || "Không có mô tả."}
+//                 </p>
+//                 <div className="flex flex-wrap items-center text-xs text-gray-500 mt-2 gap-x-3 gap-y-1">
+//                     <div className="flex items-center space-x-1">
+//                         <span className="text-gray-400">📅</span>
+//                         <span>{task.dueDate ? new Date(task.dueDate).toLocaleDateString() : "Chưa có hạn"}</span>
+//                     </div>
+//                     <div className="flex items-center space-x-1">
+//                         <span className="text-gray-400">🚩</span>
+//                         <span className={`px-2 py-1 rounded text-xs font-semibold ${getPriorityColor(task.priority)}`}>
+//                             {task.priority}
+//                         </span>
+//                     </div>
+//                     <div className="flex items-center space-x-1">
+//                         <span className="text-gray-400">📋</span>
+//                         <span className={`px-2 py-1 rounded text-xs font-semibold ${getStatusColor(task.status)}`}>
+//                             {task.status}
+//                         </span>
+//                     </div>
+//                 </div>
+//             </div>
 
-{/* <div className="mt-6">
-<ul className="space-y-2">
-    {tasks.map((task) => (
-        <li
-            key={task._id}
-            className="flex justify-between items-center bg-gray-100 p-3 rounded-md hover:bg-gray-200 transition"
-        >
-            <div>
-                <p className="font-medium">Title: {task.title}</p>
-                <p className="text-sm text-gray-600">Description: {task.description}</p>
-                <div className="flex items-center space-x-1">
-                    <span className="text-gray-400">📅</span>
-                    <span>{task.dueDate ? new Date(task.dueDate).toLocaleDateString() : "Chưa có hạn"}</span>
-                </div>
-            </div>
-            <span className={`px-2 py-1 rounded text-xs font-semibold ${getPriorityColor(task.priority)}`}>
-                {task.priority}
-            </span>
-            <span className={`px-2 py-1 rounded text-xs font-semibold ${getStatusColor(task.status)}`}>
-                {task.status}
-            </span>
-        </li>
-    ))}
-</ul>
-</div> */}
+//             {/* Khu vực nút bấm */}
+//             <div className="flex items-center space-x-2">
+//                 <button
+//                     onClick={() => handleEdit(task)}
+//                     className="px-3 py-1 text-xs font-medium bg-blue-500 text-white rounded-md hover:bg-blue-600 transition"
+//                 >
+//                     Sửa
+//                 </button>
+//                 <button
+//                     onClick={() => handleDelete(task._id)}
+//                     className="px-3 py-1 text-xs font-medium bg-red-500 text-white rounded-md hover:bg-red-600 transition"
+//                 >
+//                     Xóa
+//                 </button>
+//             </div>
+//             <TaskEditModal
+//                 isOpen={isModalOpen}
+//                 onClose={() => setIsModalOpen(false)}
+//                 task={selectedTask}
+//                 onSave={handleSaveTask}
+//             />
+//         </li>
+//     ))}
+// </ul>
+
+// </div> */}

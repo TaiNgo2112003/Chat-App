@@ -73,7 +73,7 @@ const SettingsPage = () => {
                   </div>
                   <div>
                     <h3 className="font-medium text-xs">
-                      {authUser.user?.fullName || authUser.fullName || "No data available"}
+                      {authUser.user?._id || authUser._id || "No data available"}
                     </h3>
                     <p className="text-[9px] text-base-content/70">Online</p>
                   </div>

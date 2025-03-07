@@ -4,17 +4,32 @@ import { PhoneIcon, VideoCameraIcon, MagnifyingGlassIcon, XMarkIcon } from "@her
 import React, { useEffect } from 'react';
 import VideoCall from './VideoCall';  // Thêm dòng này
 import { useState } from 'react';
+import { createDailyRoom } from '../services/dailyService';
 
 const ChatHeader = () => {
 
   const { selectedUser, setSelectedUser } = useChatStore();
   const { socket, authUser, onlineUsers } = useAuthStore();
   const [roomUrl, setRoomUrl] = useState('');
+  const [isCalling, setIsCalling] = useState(false);  // kiểm soát hiển thị VideoCall
 
-  const initiateVideoCall = (receiverId) => {
-    const roomId = `${authUser._id}-${receiverId}`;  // Tạo roomId đơn giản
-    const url = `https://chatroomtai.daily.co/8dGLXCGUvG96jyYl7xMf`;
-    setRoomUrl(url);
+
+  const initiateVideoCall = async (receiverId) => {
+    const roomId = `${authUser.user._id}-${receiverId}`;
+
+    try {
+      const room = await createDailyRoom(roomId);
+      setRoomUrl(room.url);
+      setIsCalling(true); // Bắt đầu call
+    } catch (error) {
+      console.error('Failed to create room:', error);
+      alert('Không thể tạo phòng gọi video');
+    }
+  };
+
+  const handleEndCall = () => {
+    setIsCalling(false);
+    setRoomUrl('');
   };
   const openFindInChat = () => {
     toast('🔍 Tính năng tìm kiếm chưa được hỗ trợ.');
@@ -46,12 +61,11 @@ const ChatHeader = () => {
         {/* Action Buttons */}
         <div className="flex items-center gap-3">
           {/* Call Button */}
-          <button
-            onClick={() => initiateVideoCall(selectedUser._id)}
-            className="btn btn-sm btn-secondary"
-          >
-            Video
-          </button>
+          <button onClick={() => initiateVideoCall(selectedUser._id)}>Gọi Video</button>
+
+          {isCalling && roomUrl && (
+            <VideoCall roomUrl={roomUrl} onCallEnd={handleEndCall} />
+          )}
 
           {/* Video Call Button */}
           <button
@@ -82,8 +96,7 @@ const ChatHeader = () => {
             <XMarkIcon className="w-5 h-5" />
             Close
           </button>
-          {roomUrl && <VideoCall roomUrl={roomUrl} onCallEnd={() => setRoomUrl('')} />}
-
+          {/* {roomUrl && <VideoCall roomUrl={roomUrl} onCallEnd={() => setRoomUrl('')} />} */}
         </div>
       </div>
     </div>

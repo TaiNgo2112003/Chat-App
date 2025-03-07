@@ -11,6 +11,7 @@ import messageRoute from "./routes/message.route.js";
 import removebg from "./routes/rmbackground.route.js"
 import createim from "./routes/createim.route.js"
 import taskRouter from "./routes/taskRoutes.route.js"
+import callVideo from "./routes/callVideo.route.js"
 import { app, server } from "./lib/socket.js";
 dotenv.config();
 
@@ -33,6 +34,7 @@ app.use("/api/ai", createim);
 app.use("/api/auth", authRoutes);
 app.use("/api/messages", messageRoute);
 app.use("/api/tasks", taskRouter);
+app.use("/api/call", callVideo);
 
 if (process.env.NODE_ENV === "production") {
     app.use(express.static(path.join(__dirname, "../frontend/dist")));

@@ -1,41 +1,20 @@
-import React, { useEffect, useRef } from 'react';
-import DailyIframe from '@daily-co/daily-js';
+import React, { useEffect } from 'react';
+import { getOrCreateCallFrame, destroyCallFrame } from "../services/dailyManager";
 
 const VideoCall = ({ roomUrl, onCallEnd }) => {
-    const callFrameRef = useRef(null);
 
     useEffect(() => {
-        if (callFrameRef.current) {
-            // Nếu đã có callFrame thì không tạo mới
-            return;
-        }
-
-        const callFrame = DailyIframe.createFrame({
-            iframeStyle: {
-                position: 'fixed',
-                top: '10%',
-                left: '10%',
-                width: '80%',
-                height: '80%',
-                zIndex: 1000,
-            },
-            url: roomUrl,
-        });
-
-        callFrameRef.current = callFrame;
+        const callFrame = getOrCreateCallFrame(roomUrl);
 
         callFrame.join();
 
         callFrame.on('left-meeting', () => {
-            onCallEnd(); // Gọi khi user rời phòng
-            callFrameRef.current = null; // Xóa ref khi rời phòng
+            onCallEnd();
+            destroyCallFrame();
         });
 
         return () => {
-            if (callFrameRef.current) {
-                callFrameRef.current.destroy();
-                callFrameRef.current = null;
-            }
+            destroyCallFrame();
         };
     }, [roomUrl, onCallEnd]);
 

@@ -5,7 +5,7 @@ import React, { useEffect } from 'react';
 import VideoCall from './VideoCall';  // Thêm dòng này
 import { useState } from 'react';
 import { createDailyRoom } from '../services/dailyService';
-
+import { useCallStore } from "../store/useCallStore";
 const ChatHeader = () => {
 
   const { selectedUser, setSelectedUser } = useChatStore();
@@ -13,19 +13,67 @@ const ChatHeader = () => {
   const [roomUrl, setRoomUrl] = useState('');
   const [isCalling, setIsCalling] = useState(false);  // kiểm soát hiển thị VideoCall
 
+  const {
+    notification,
+    users,
+    selectedUserCall,
+    isUsersLoading,
+    subscribeToCall,
+    unsubscribeFromCall,
+    setSelectedUserCall,
+  } = useCallStore();
+  const {sendNotification} = useCallStore();
+  console.log("selectedUser",selectedUser._id) 
+  const roomId = [authUser.user._id, selectedUser._id].sort().join('');
 
-  const initiateVideoCall = async (receiverId) => {
-    const roomId = `${authUser.user._id}-${receiverId}`;
+  useEffect(() => {
+    subscribeToCall(); 
+    return () => unsubscribeFromCall();
+  }, []);
+  
+  // Fetch messages and set up subscription
+  useEffect(() => {
+    if (selectedUserCall && selectedUser._id) {
+      subscribeToCall();
+    }
+    return () => unsubscribeFromCall();
+  }, [selectedUserCall, subscribeToCall, unsubscribeFromCall]);
 
+  const handleVideoCall = async () => {
+    const receiverId = selectedUser._id;
+  
     try {
+      // 🚀 Cập nhật selectedUserCall trước khi gọi API
+      setSelectedUserCall(selectedUser);  
+  
       const room = await createDailyRoom(roomId);
       setRoomUrl(room.url);
-      setIsCalling(true); // Bắt đầu call
+      setIsCalling(true);
+  
+      const notificationData = {
+        idRoom: room.url,
+      };
+  
+      console.log("📩 Gửi notification:", notificationData);
+      await sendNotification(notificationData); // 🔥 Giờ `selectedUserCall` không bị undefined nữa
+  
+      if (socket) {
+        console.log("🔵 Gửi sự kiện callVideoRequest đến:", receiverId);
+        socket.emit('callVideoRequest', {
+          senderId: authUser.user._id,
+          receiverId,
+          idRoom: room.url,
+        });
+      }
     } catch (error) {
-      console.error('Failed to create room:', error);
-      alert('Không thể tạo phòng gọi video');
+      console.error('Lỗi khi tạo phòng hoặc gửi thông báo:', error);
+      alert('Không thể tạo phòng hoặc gửi thông báo.');
     }
   };
+  
+  
+  
+
 
   const handleEndCall = () => {
     setIsCalling(false);
@@ -61,7 +109,7 @@ const ChatHeader = () => {
         {/* Action Buttons */}
         <div className="flex items-center gap-3">
           {/* Call Button */}
-          <button onClick={() => initiateVideoCall(selectedUser._id)}>Gọi Video</button>
+          <button onClick={handleVideoCall}>Gọi Video</button>
 
           {isCalling && roomUrl && (
             <VideoCall roomUrl={roomUrl} onCallEnd={handleEndCall} />

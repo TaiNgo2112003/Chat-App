@@ -4,19 +4,18 @@ export const sendNotification = async (req, res) => {
     try {
         const { idRoom } = req.body; 
         const { id: receiverId } = req.params;
-        const senderId = req.user._id;
+        const senderId = req.user.fullName;
 
         if (!idRoom || !receiverId || !senderId) {
             return res.status(400).json({ message: "Thiếu thông tin cần thiết!" });
         }
-
         const callVideoRequest = { senderId, receiverId, idRoom };
-        console.log("📞 Gửi cuộc gọi đến:", receiverId);
-        console.log("📞 Nội dung thông báo:", callVideoRequest);
-
         const receiverSocketId = getReceiverSocketId(receiverId);
+        console.log("callVideoRequest: ",callVideoRequest)
+        console.log("receiverSocketId: ",receiverSocketId)
         if (receiverSocketId) {
             io.to(receiverSocketId).emit("callVideoRequest", callVideoRequest);
+            console.log("callVideoRequest: ",callVideoRequest)
         } else {
             console.warn(`⚠️ Socket ID không tồn tại cho receiverId: ${receiverId}`);
         }

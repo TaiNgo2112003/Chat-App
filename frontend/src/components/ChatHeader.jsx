@@ -4,12 +4,15 @@ import { useChatStore } from "../store/useChatStore";
 import { useCallStore } from "../store/useCallStore";
 import { createDailyRoom } from "../services/dailyService";
 import VideoCall from "./VideoCall";
+import Mark from "mark.js";
+
 import {
   PhoneIcon,
   VideoCameraIcon,
   MagnifyingGlassIcon,
   XMarkIcon,
 } from "@heroicons/react/24/outline";
+import toast from "react-hot-toast";
 
 const ChatHeader = () => {
   const { selectedUser, setSelectedUser } = useChatStore();
@@ -75,8 +78,41 @@ const ChatHeader = () => {
   };
 
   const openFindInChat = () => {
-    alert("🔍 Tính năng tìm kiếm chưa được hỗ trợ.");
+    // Nhập từ khóa tìm kiếm từ người dùng
+    const keyword = prompt("🔍 Nhập từ khóa cần tìm:");
+  
+    if (!keyword) return; // Nếu không nhập gì thì thoát
+  
+    // Chọn phần nội dung chat (đổi `#chat-container` thành id thực tế)
+    const chatContainer = document.getElementById("chat-container");
+  
+    if (!chatContainer) {
+      toast.error("Không tìm thấy vùng chat!");
+      return;
+    }
+  
+    // Xóa highlight cũ trước khi tìm kiếm mới
+    const markInstance = new Mark(chatContainer);
+    markInstance.unmark({
+      done: () => {
+        // Đánh dấu từ khóa mới
+        markInstance.mark(keyword, {
+          separateWordSearch: false,
+          className: "highlighted-text", // Áp dụng CSS
+          done: () => {
+            // Tìm phần tử đầu tiên được highlight
+            const firstHighlighted = chatContainer.querySelector(".highlighted-text");
+            if (firstHighlighted) {
+              firstHighlighted.scrollIntoView({ behavior: "smooth", block: "center" });
+            } else {
+              toast.error("Không tìm thấy kết quả.");
+            }
+          },
+        });
+      },
+    });
   };
+  
 
   return (
     <div className="p-2.5 border-b border-base-300">
@@ -123,7 +159,9 @@ const ChatHeader = () => {
         </div>
       </div>
     </div>
+
   );
+
 };
 
 export default ChatHeader;

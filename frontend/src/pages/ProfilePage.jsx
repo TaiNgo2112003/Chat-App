@@ -111,9 +111,10 @@ const ProfilePage = () => {
                   const diffInDays = Math.floor((now - updatedAt) / (1000 * 60 * 60 * 24)); // Tính số ngày chênh lệch
 
                   return diffInDays > 50 ? (
-                    <span className="text-red-500">Inactive</span>
-                  ) : (
                     <span className="text-green-500">Active</span>
+
+                  ) : (
+                    <span className="text-red-500">Inactive</span>
                   );
                 })()}
               </div>

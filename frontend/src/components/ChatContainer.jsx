@@ -5,6 +5,9 @@ import MessageInput from "../components/MessageInput";
 import MessageSkeleton from "./skeletons/MessageSkeleton";
 import { useAuthStore } from "../store/useAuthStore";
 import { formatMessageTime } from "../lib/utils";
+import { AiOutlineFileWord, AiOutlineFilePdf, AiOutlineFile, AiFillFileExcel } from "react-icons/ai";
+import axios from "axios";
+import { saveAs } from "file-saver";
 
 const ChatContainer = () => {
   // State and store hooks
@@ -69,7 +72,15 @@ const ChatContainer = () => {
       </div>
     );
   }
-
+  const downloadFile = (fileName) => {
+    const fileUrl = `/files/${fileName}`; // Đường dẫn file trong thư mục public
+    const link = document.createElement("a");
+    link.href = fileUrl;
+    link.download = fileName; // Đặt tên file khi tải xuống
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
   // Main chat UI
   return (
     <div className="flex-1 flex flex-col overflow-auto">
@@ -77,7 +88,7 @@ const ChatContainer = () => {
       <ChatHeader />
 
       {/* Messages List */}
-      <div className="flex-1 overflow-y-auto p-4 space-y-4">
+      <div id="chat-container" className="flex-1 overflow-y-auto p-4 space-y-4">
         {messages.map((message) => (
           <div
             key={message._id}
@@ -117,7 +128,68 @@ const ChatContainer = () => {
                   className="sm:max-w-[200px] rounded-md mb-2"
                 />
               )}
-              {message.text && <p>{message.text}</p>}
+              {message.text && (
+                <>
+                  {message.text.startsWith("Location: https://maps.google.com/?q=") ? (
+                    <div className="flex flex-col items-start p-2 border rounded-lg bg-slate-600 mt-2">
+                      {/* Lấy link Google Maps */}
+                      <a
+                        href={message.text.replace("Location: ", "").trim()}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-blue-500 text-sm font-semibold hover:underline"
+                      >
+                        📍 Xem trên Google Maps
+                      </a>
+
+                      {/* Hiển thị iframe Google Maps */}
+                      <iframe
+                        src={message.text.replace("Location: ", "").trim() + "&output=embed"}
+                        width="250"
+                        height="200"
+                        style={{ border: 0, marginTop: "5px" }}
+                        allowFullScreen=""
+                        loading="lazy"
+                      ></iframe>
+                    </div>
+                  ) : (
+                    <p>{message.text}</p>
+                  )}
+                </>
+              )}
+              {message.file && (
+                <div className="flex items-center p-2 border rounded-lg bg-slate-600 mt-2">
+                  {console.log("🔗 File URL:", `https://ipfs.io/ipfs/${message.file}`)}
+                  {console.log("🔗 File URL ---:", message.file)}
+
+                  {/* Xác định icon theo loại file */}
+                  {message.file.endsWith(".doc") || message.file.endsWith(".docx") ? (
+                    <AiOutlineFileWord className="text-blue-600 w-10 h-10 mr-2" />
+                  ) : message.file.endsWith(".pdf") ? (
+                    <AiOutlineFilePdf className="text-red-600 w-10 h-10 mr-2" />
+                  ) : message.file.endsWith(".xlsx") ? (
+                    <AiFillFileExcel className="text-green-700 w-10 h-10 mr-2" />
+                  ) : (
+                    <AiOutlineFile className="text-gray-600 w-10 h-10 mr-2" />
+                  )}
+
+                  {/* Tên file + Nút Download */}
+                  <div className="flex flex-col">
+                    <span className="text-sm font-semibold truncate max-w-[150px]">
+                      {decodeURIComponent(message.file.split("/").pop())}
+                    </span>
+                    <button
+                      onClick={() => downloadFile(message.file)}
+                      className="text-blue-500 text-sm hover:underline"
+                    >
+                      ⬇ Tải về
+                    </button>
+                  </div>
+                </div>
+              )}
+
+
+
 
               {/* Options Button */}
               <div className="absolute top-0 right-0 mt-2 mr-2 hidden group-hover:flex items-center justify-center">

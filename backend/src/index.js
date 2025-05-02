@@ -12,6 +12,7 @@ import removebg from "./routes/rmbackground.route.js"
 import createim from "./routes/createim.route.js"
 import taskRouter from "./routes/taskRoutes.route.js"
 import callVideo from "./routes/callVideo.route.js"
+import postContent from "./routes/post.route.js"
 import { app, server } from "./lib/socket.js";
 dotenv.config();
 
@@ -19,8 +20,8 @@ const PORT = process.env.PORT;
 const __dirname = path.resolve();
 
 // Middleware
-app.use(express.json({ limit: "50mb" })); // Tăng giới hạn JSON
-app.use(express.urlencoded({ limit: "50mb", extended: true })); // Cho form-urlencoded
+app.use(express.json({ limit: "100mb" })); // Tăng giới hạn JSON
+app.use(express.urlencoded({ limit: "100mb", extended: true })); // Cho form-urlencoded
 app.use(cookieParser()); // Để xử lý cookie
 app.use(cors({
     origin: "http://localhost:5173", // Client
@@ -35,6 +36,7 @@ app.use("/api/auth", authRoutes);
 app.use("/api/messages", messageRoute);
 app.use("/api/tasks", taskRouter);
 app.use("/api/call", callVideo);
+app.use("/api/posts",postContent )
 
 if (process.env.NODE_ENV === "production") {
     app.use(express.static(path.join(__dirname, "../frontend/dist")));

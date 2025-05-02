@@ -15,7 +15,7 @@ const messageSchema = new mongoose.Schema(
             ref:"User",
             required: true,
         },
-        text:{
+        text:{ 
             type: String,
         },
         image:{

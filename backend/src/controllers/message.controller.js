@@ -46,12 +46,14 @@ export const sendMessage = async (req, res) => {
         }
 
         let fileURL;
-        if (req.file) {
-            console.log("File received in controller:", req.file); // Kiểm tra multer đã thêm file vào req chưa
-            const { buffer, originalname } = req.file; // Nếu req.file tồn tại nhưng buffer undefined => cấu trúc file không đúng
-            const fileUploadResponse = await uploadFile(buffer, originalname); // Upload file lên Filebase
-            fileURL = fileUploadResponse.fileUrl; // Lấy URL của file đã upload
+        console.log("File received in controller:", req.files?.file?.[0]);
+
+        if (req.files?.file?.[0]) {
+            const { buffer, originalname } = req.files.file[0];
+            const fileUploadResponse = await uploadFile(buffer, originalname);
+            fileURL = fileUploadResponse.fileUrl;
         }
+
         // Tạo tin nhắn mới
         const newMessage = new Message({
             senderId,

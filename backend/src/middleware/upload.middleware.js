@@ -8,7 +8,16 @@ const upload = multer({
   storage: storage,
   limits: { fileSize: 100 * 1024 * 1024 }, // Giới hạn 100MB
   fileFilter: (req, file, cb) => {
-    const allowedTypes = ["image/jpeg", "image/png", "video/mp4", "video/mkv"];
+    const allowedTypes = [
+      "image/jpeg",
+      "image/png",
+      "video/mp4",
+      "video/mkv",
+      "application/pdf",
+      "application/msword", // .doc
+      "application/vnd.openxmlformats-officedocument.wordprocessingml.document", // .docx
+      "text/plain"
+    ];
     if (allowedTypes.includes(file.mimetype)) {
       cb(null, true);
     } else {
@@ -21,6 +30,7 @@ const upload = multer({
 const uploadFields = upload.fields([
   { name: "image", maxCount: 1 },
   { name: "video", maxCount: 1 },
+  { name: "file", maxCount: 1 },
 ]);
 
 export default uploadFields;

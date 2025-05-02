@@ -73,7 +73,7 @@ const SettingsPage = () => {
                   </div>
                   <div>
                     <h3 className="font-medium text-xs">
-                      {authUser.user?._id || authUser._id || "No data available"}
+                      {authUser.user?.fullName || authUser.fullName || "No data available"}
                     </h3>
                     <p className="text-[9px] text-base-content/70">Online</p>
                   </div>
@@ -132,14 +132,14 @@ const SettingsPage = () => {
 
   const LanguageSection = () => {
     const [language, setLanguage] = useState("en");
-  
+
     const translations = {
       en: { title: "Language", description: "Select your preferred language" },
       vi: { title: "Ngôn ngữ", description: "Chọn ngôn ngữ bạn muốn" },
       fr: { title: "Langue", description: "Sélectionnez votre langue préférée" },
       es: { title: "Idioma", description: "Selecciona tu idioma preferido" },
     };
-  
+
     return (
       <div>
         <h2 className="text-lg font-semibold">{translations[language].title}</h2>
@@ -159,7 +159,7 @@ const SettingsPage = () => {
       </div>
     );
   };
-  
+
   const renderFAQsSection = () => (
     <div>
       <h2 className="text-lg font-semibold">FAQs</h2>
@@ -264,8 +264,17 @@ const SettingsPage = () => {
       <p className="text-sm text-base-content/70">
         Current Version: <span className="font-medium">1.0.0</span>
       </p>
+      <div className="mt-4">
+        <h3 className="text-md font-semibold mb-2">Access App via QR Code</h3>
+        <img
+          src={"/frame.png"}
+          alt="QR code"
+          className="w-48 h-48" // Kích thước lớn hơn một chút
+        />
+      </div>
     </div>
   );
+  
 
   // Render selected option
   const renderContent = () => {
@@ -273,7 +282,7 @@ const SettingsPage = () => {
       case "theme":
         return renderThemeSection();
       case "language":
-        return <LanguageSection/>;
+        return <LanguageSection />;
       case "faq":
         return renderFAQsSection();
       case "contact":

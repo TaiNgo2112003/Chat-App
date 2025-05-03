@@ -2,8 +2,9 @@ import { THEMES } from "../constants";
 import { useThemeStore } from "../store/useThemeStore";
 import { useAuthStore } from "../store/useAuthStore";
 import { Send } from "lucide-react";
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { FaEnvelope, FaPhone, FaFacebook, FaInstagram, FaGithub, FaLinkedin, FaTelegramPlane, FaTiktok } from "react-icons/fa";
+import FeedbackSection from "../components/FeedbackSection"; // chỉnh path nếu cần
 
 // Static preview messages
 const PREVIEW_MESSAGES = [
@@ -230,19 +231,12 @@ const SettingsPage = () => {
       </div>
     </div>
   );
+  
+  const renderFeedbackSection = (authUser) => {
+    return <FeedbackSection authUser={authUser} />;
 
-  //Feedback function
-  const renderFeedbackSection = () => (
-    <div>
-      <h2 className="text-lg font-semibold">Feedback</h2>
-      <p className="text-sm text-base-content/70">We value your feedback</p>
-      <textarea
-        className="textarea textarea-bordered w-full mt-4"
-        placeholder="Share your feedback here..."
-      ></textarea>
-      <button className="btn btn-primary mt-2">Submit</button>
-    </div>
-  );
+  };
+  
   //Conntected function
   const renderConnectedAppsSection = () => (
     <div>
@@ -288,7 +282,7 @@ const SettingsPage = () => {
       case "contact":
         return renderContactSupportSection();
       case "feedback":
-        return renderFeedbackSection();
+        return renderFeedbackSection(authUser);
       case "apps":
         return renderConnectedAppsSection();
       case "version":
@@ -323,3 +317,4 @@ const SettingsPage = () => {
 };
 
 export default SettingsPage;
+

@@ -17,7 +17,7 @@ router.put("/update-profile",protectRoute, updateProfile)
 
 router.get("/check", protectRoute, checkAuth);
 
-router.get("/prfile", getProfile)
+router.get("/profile", getProfile);
 
 
 export default router;

@@ -151,7 +151,7 @@ const ProfilePage = () => {
       if (userId) {
         try {
           setLoading(true);
-          const res = await axios.get(`${BASE_URL}/profile?id=${userId}`);
+          const res = await axios.get(`${BASE_URL}/api/auth/profile?id=${userId}`);
           setProfile(res.data);
         } catch (error) {
           console.error("Error fetching public profile:", error);

@@ -40,13 +40,13 @@ const App = () => {
   return (
     <div data-theme={theme}>
       {/* Điều hướng & Navbar */}
-      <Navabar/>
+      <Navabar />
       <Routes>
         <Route path="/" element={authUser ? <HomePage /> : <Navigate to="/login" />} />
         <Route path="/signup" element={!authUser ? <SignUpPage /> : <Navigate to="/" />} />
         <Route path="/login" element={!authUser ? <LoginPage /> : <Navigate to="/" />} />
         <Route path="/settings" element={<SettingPage />} />
-        <Route path="/profile" element={!authUser ? <ProfilePage /> : <Navigate to="/" />} />
+        <Route path="/profile" element={<ProfilePage />} />
         <Route path="/todo" element={authUser ? <ToDoPage /> : <Navigate to="/login" />} />
         <Route path="/generatorimage" element={authUser ? <AiImage /> : <Navigate to="/login" />} />
         <Route path="/cloud" element={authUser ? <CloudPage /> : <Navigate to="/login" />} />

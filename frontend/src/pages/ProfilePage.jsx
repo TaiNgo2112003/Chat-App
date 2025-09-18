@@ -135,7 +135,10 @@ import { useAuthStore } from "../store/useAuthStore";
 import axios from "axios";
 import { Camera, Mail, User } from "lucide-react";
 
-const BASE_URL = import.meta.env.MODE === "development" ? "http://localhost:5001" : "/";
+const BASE_URL =
+  import.meta.env.MODE === "development"
+    ? "http://localhost:5001"
+    : "https://chat-app-y8dr.onrender.com";
 
 const ProfilePage = () => {
   const { authUser, isUpdatingProfile, updateProfile, checkAuth } = useAuthStore();

@@ -50,14 +50,12 @@ const server = http.createServer(app);
 
 const io = new Server(server, {
   cors: {
-    origin: ["http://localhost:5173"],
+    origin: ["http://localhost:5173", " https://mobile-connection-web.vercel.app"],
   },
 });
 
-// Lưu trữ người dùng trực tuyến
-const userSocketMap = {}; // {userId: socketId}
+const userSocketMap = {}; 
 
-// Hàm lấy socketId của người nhận
 export function getReceiverSocketId(userId) {
   return userSocketMap[userId] || null;
 }

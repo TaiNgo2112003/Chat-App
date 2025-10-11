@@ -24,7 +24,7 @@ app.use(express.json({ limit: "100mb" })); // Tăng giới hạn JSON
 app.use(express.urlencoded({ limit: "100mb", extended: true })); // Cho form-urlencoded
 app.use(cookieParser()); // Để xử lý cookie
 app.use(cors({
-    origin: "http://localhost:5173", // Client
+    origin: true, 
     credentials: true,
 }));
 app.use("/api/ai", removebg); // Định tuyến API AI

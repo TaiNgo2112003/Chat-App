@@ -17,10 +17,10 @@ const CloudStorageSchema = new mongoose.Schema({
 
 const userSchema = new mongoose.Schema(
   {
+    // firebaseUid is optional for local/signup flows; when using Firebase auth set this value
     firebaseUid: {
       type: String,
-      required: true,
-      unique: true,
+      default: "",
     },
 
     email: {

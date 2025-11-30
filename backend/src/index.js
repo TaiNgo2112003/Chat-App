@@ -15,6 +15,7 @@ import callVideo from "./routes/callVideo.route.js"
 import postContent from "./routes/post.route.js"
 import { app, server } from "./lib/socket.js";
 import cloudRoute from "./routes/clound.route.js";
+import newsroute from "./routes/news.route.js"
 dotenv.config();
 
 const PORT = process.env.PORT;
@@ -39,6 +40,7 @@ app.use("/api/tasks", taskRouter);
 app.use("/api/call", callVideo);
 app.use("/api/posts",postContent )
 app.use("/api/cloud", cloudRoute);
+app.use("/api/news", newsroute ); 
 
 if (process.env.NODE_ENV === "production") {
     app.use(express.static(path.join(__dirname, "../frontend/dist")));

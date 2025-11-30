@@ -13,9 +13,10 @@ import ProfilePage from "./pages/ProfilePage";
 import ToDoPage from "./pages/ToDoPage";
 import CloudPage from "./pages/CloudPage";
 import ContactsPage from "./pages/ContactsPage";
-import DiscoveryPage from "./pages/DiscoveryPage";
+import DiscoveryPage from "./pages/NewsPage";
 import TimeLinePage from "./pages/TimeLinePage";
 import AiImage from "./pages/AIImage";
+import NewsPage from "./pages/NewsPage";
 // Stores
 import { useAuthStore } from './store/useAuthStore';
 import { useThemeStore } from './store/useThemeStore';
@@ -50,6 +51,7 @@ const App = () => {
         <Route path="/todo" element={authUser ? <ToDoPage /> : <Navigate to="/login" />} />
         <Route path="/generatorimage" element={authUser ? <AiImage /> : <Navigate to="/login" />} />
         <Route path="/cloud" element={authUser ? <CloudPage /> : <Navigate to="/login" />} />
+        <Route path="/news" element={authUser ? <NewsPage /> : <Navigate to="/login" />} />
         <Route path="/contacts" element={authUser ? <ContactsPage /> : <Navigate to="/login" />} />
         <Route path="/discovery" element={authUser ? <DiscoveryPage /> : <Navigate to="/login" />} />
         <Route path="/timeline" element={authUser ? <TimeLinePage /> : <Navigate to="/login" />} />
